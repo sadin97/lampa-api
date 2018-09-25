@@ -54,37 +54,23 @@ app.delete('/measurement/:id', function (req, res) {
     });
 });
 
+// Add a new measurement.
+app.post('/measurement', function (req, res) {
 
+  let aqi = req.body.aqi;
+  let pm25 = req.body.pm25;
+  let pm10 = req.body.pm25;
+  let co2 = req.body.co2;
+  let date = req.body.date;
+  let time = req.body.time;
 
+  if (!aqi || !pm25 || !pm10 || !co2 || !date || !time) {
+      return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
+  }
 
-
-
-
-
-
-
-
-// Search for todos with ‘bug’ in their name
-app.get('/todos/search/:keyword', function (req, res) {
-    let keyword = req.params.keyword;
-    mc.query("SELECT * FROM tasks WHERE task LIKE ? ", ['%' + keyword + '%'], function (error, results, fields) {
+    mc.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?", [aqi, pm25, pm10, co2, date, time], function (error, results, fields) {
         if (error) throw error;
-        return res.send({ error: false, data: results, message: 'Todos search list.' });
-    });
-});
-
-// Add a new todo
-app.post('/todo', function (req, res) {
-
-    let task = req.body.task;
-
-    if (!task) {
-        return res.status(400).send({ error:true, message: 'Please provide task' });
-    }
-
-    mc.query("INSERT INTO tasks SET ? ", { task: task }, function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results, message: 'New task has been created successfully.' });
+        return res.send({ error: false, data: results, message: 'New measurement has been created successfully.' });
     });
 });
 
@@ -101,7 +87,7 @@ app.put('/measurement', function (req, res) {
     let time = req.body.time;
 
     if (!measurement_id || !aqi || !pm25 || !pm10 || !co2 || !date || !time) {
-        return res.status(400).send({ error: aqi, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
+        return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
     }
 
     mc.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
@@ -109,27 +95,6 @@ app.put('/measurement', function (req, res) {
         return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
     });
 });
-
-
-
-//  Update todo with id
-// app.put('/todo', function (req, res) {
-//
-//     let task_id = req.body.task_id;
-//     let task = req.body.task;
-//
-//     if (!task_id || !task) {
-//         return res.status(400).send({ error: task, message: 'Please provide task and task_id' });
-//     }
-//
-//     mc.query("UPDATE tasks SET task = ? WHERE id = ?", [task, task_id], function (error, results, fields) {
-//         if (error) throw error;
-//         return res.send({ error: false, data: results, message: 'Task has been updated successfully.' });
-//     });
-// });
-
-
-
 
 // all other requests redirect to 404
 app.all("*", function (req, res, next) {
