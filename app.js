@@ -89,44 +89,44 @@ app.post('/todo', function (req, res) {
 });
 
 // Update measurement with id.
-// app.put('/measurement', function (req, res) {
-//
-//     let measurement_id = req.body.measurement_id;
-//     let measure = req.body.measure;
-//     let aqi = req.body.aqi;
-//     let pm25 = req.body.pm25;
-//     let pm10 = req.body.pm25;
-//     let co2 = req.body.co2;
-//     let date = req.body.date;
-//     let time = req.body.time;
-//
-//     if (!measurement_id || !measure || !aqi || !pm25 || !pm10 || !co2 || !date || !time) {
-//         return res.status(400).send({ error: measure, message: 'Please provide: measurement_id, measure, aqi, pm25, pm10, co2, date and time.' });
-//     }
-//
-//     mc.query("UPDATE measurements SET measure = ?, aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [measure, aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
-//         if (error) throw error;
-//         return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
-//     });
-// });
+app.put('/measurement', function (req, res) {
+
+    let measurement_id = req.body.measurement_id;
+    // let measure = req.body.measure;
+    let aqi = req.body.aqi;
+    let pm25 = req.body.pm25;
+    let pm10 = req.body.pm25;
+    let co2 = req.body.co2;
+    let date = req.body.date;
+    let time = req.body.time;
+
+    if (!measurement_id || !aqi || !pm25 || !pm10 || !co2 || !date || !time) {
+        return res.status(400).send({ error: aqi, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
+    }
+
+    mc.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
+        if (error) throw error;
+        return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
+    });
+});
 
 
 
 //  Update todo with id
-app.put('/todo', function (req, res) {
-
-    let task_id = req.body.task_id;
-    let task = req.body.task;
-
-    if (!task_id || !task) {
-        return res.status(400).send({ error: task, message: 'Please provide task and task_id' });
-    }
-
-    mc.query("UPDATE tasks SET task = ? WHERE id = ?", [task, task_id], function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results, message: 'Task has been updated successfully.' });
-    });
-});
+// app.put('/todo', function (req, res) {
+//
+//     let task_id = req.body.task_id;
+//     let task = req.body.task;
+//
+//     if (!task_id || !task) {
+//         return res.status(400).send({ error: task, message: 'Please provide task and task_id' });
+//     }
+//
+//     mc.query("UPDATE tasks SET task = ? WHERE id = ?", [task, task_id], function (error, results, fields) {
+//         if (error) throw error;
+//         return res.send({ error: false, data: results, message: 'Task has been updated successfully.' });
+//     });
+// });
 
 
 
