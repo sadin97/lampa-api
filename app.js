@@ -63,9 +63,10 @@ app.post('/measurement', function (req, res) {
   let co2 = req.body.co2;
   let date = req.body.date;
   let time = req.body.time;
+  let deviceId = req.body.deviceId;
 
-  if (!aqi || !pm25 || !pm10 || !co2 || !date || !time) {
-      return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
+  if (!aqi || !pm25 || !pm10 || !co2 || !date || !time || !deviceId) {
+      return res.status(400).send({ error: true, message: 'Please provide: aqi (int), pm25 (int), pm10 (int), co2 (int), date (string), time (string) and deviceId (int).' });
   }
 
     mc.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?", [aqi, pm25, pm10, co2, date, time], function (error, results, fields) {
@@ -95,6 +96,69 @@ app.put('/measurement', function (req, res) {
         return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Add a new user-device connection.
+app.post('/userdevice', function (req, res) {
+
+  let userID = req.body.userID;
+  let deviceID = req.body.deviceID;
+
+  if (!userID || !deviceID) {
+      return res.status(400).send({ error: true, message: 'Please provide: userId (int) and deviceId (int).' });
+  }
+
+    mc.query("INSERT INTO userdevices SET userID = ?, deviceID = ?", [userID, deviceID], function (error, results, fields) {
+        if (error) throw error;
+        return res.send({ error: false, data: results, message: 'New user-device connection has been created successfully.' });
+    });
+});
+
+// Retrieve user from user-devices with id.
+app.get('/userdevice/:userID', function (req, res) {
+    let user_id = req.params.userID;
+    if (!user_id) {
+        return res.status(400).send({ error: true, message: 'Please provide user id.' });
+    }
+    mc.query('SELECT * FROM userdevices where userID = ?', user_id, function (error, results, fields) {
+        if (error) throw error;
+        return res.send({ error: false, data: results[0], message: 'Successfully retrieved user-device data.' });
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // all other requests redirect to 404
 app.all("*", function (req, res, next) {
