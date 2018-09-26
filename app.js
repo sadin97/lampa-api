@@ -16,12 +16,12 @@ app.use(bodyParser.urlencoded({
 
 
 var users = require('./routes/users');
-// var devices = require('./routes/devices');
-// var measurements = require('./routes/measurements');
+var devices = require('./routes/devices');
+var measurements = require('./routes/measurements');
 
 app.use('/api/v1/', users);
-// app.use('/api/v1/', devices);
-// app.use('/api/v1/', measurements);
+app.use('/api/v1/', devices);
+app.use('/api/v1/', measurements);
 
 
 // Default route.
@@ -41,7 +41,7 @@ app.use('/api/v1', router);
 // });
 
 // Retrieve all measurements.
-app.get('/measurements', function (req, res) {
+router.get('/measurements', function (req, res) {
     db.query('SELECT * FROM measurements', function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'List of all measurements.' });
@@ -49,7 +49,7 @@ app.get('/measurements', function (req, res) {
 });
 
 // Retrieve measurement with id.
-app.get('/measurement/:id', function (req, res) {
+router.get('/measurement/:id', function (req, res) {
     let measurement_id = req.params.id;
     if (!measurement_id) {
         return res.status(400).send({ error: true, message: 'Please provide measurement id.' });
@@ -62,7 +62,7 @@ app.get('/measurement/:id', function (req, res) {
 });
 
 //  Delete measurement.
-app.delete('/measurement/:id', function (req, res) {
+router.delete('/measurement/:id', function (req, res) {
     let measurement_id = req.params.id;
     db.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
         if (error) throw error;
@@ -71,7 +71,7 @@ app.delete('/measurement/:id', function (req, res) {
 });
 
 // Add a new measurement.
-app.post('/measurement', function (req, res) {
+router.post('/measurement', function (req, res) {
 
   let aqi = req.body.aqi;
   let pm25 = req.body.pm25;
@@ -92,7 +92,7 @@ app.post('/measurement', function (req, res) {
 });
 
 // Update measurement with id.
-app.put('/measurement', function (req, res) {
+router.put('/measurement', function (req, res) {
 
     let measurement_id = req.body.measurement_id;
     // let measure = req.body.measure;
@@ -127,7 +127,7 @@ app.put('/measurement', function (req, res) {
 
 
 // Add a new user-device connection.
-app.post('/userdevice', function (req, res) {
+router.post('/userdevice', function (req, res) {
 
   let userID = req.body.userID;
   let deviceID = req.body.deviceID;
@@ -143,7 +143,7 @@ app.post('/userdevice', function (req, res) {
 });
 
 // Retrieve user from user-devices with id.
-app.get('/userdevice/:userID', function (req, res) {
+router.get('/userdevice/:userID', function (req, res) {
     let user_id = req.params.userID;
     if (!user_id) {
         return res.status(400).send({ error: true, message: 'Please provide user id.' });
@@ -177,7 +177,7 @@ app.get('/userdevice/:userID', function (req, res) {
 
 
 // all other requests redirect to 404
-app.all("*", function (req, res, next) {
+router.all("*", function (req, res, next) {
     return res.send('Page not found (use some other).');
     next();
 });

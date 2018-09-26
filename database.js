@@ -10,3 +10,5 @@ const lampa_db = mysql.createConnection({
 
 // Connect to database.
 lampa_db.connect();
+
+module.exports = lampa_db;
