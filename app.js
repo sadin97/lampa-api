@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+
 var users = require('./routes/users');
 var devices = require('./routes/devices');
 var measurements = require('./routes/measurements');
@@ -16,7 +17,6 @@ var measurements = require('./routes/measurements');
 app.use('/api/v1/', users);
 app.use('/api/v1/', devices);
 app.use('/api/v1/', measurements);
-
 
 // Default route.
 router.get('/', function(req, res) {
