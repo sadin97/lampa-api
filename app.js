@@ -9,7 +9,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
 var users = require('./routes/users');
 var devices = require('./routes/devices');
 var measurements = require('./routes/measurements');
@@ -27,14 +26,11 @@ app.use('/api/v1', router);
 
 // Add a new user-device connection.
 router.post('/userdevice', function (req, res) {
-
   let userID = req.body.userID;
   let deviceID = req.body.deviceID;
-
   if (!userID || !deviceID) {
       return res.status(400).send({ error: true, message: 'Please provide: userId (int) and deviceId (int).' });
   }
-
     db.query("INSERT INTO userdevices SET userID = ?, deviceID = ?", [userID, deviceID], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'New user-device connection has been created successfully.' });
@@ -51,19 +47,18 @@ router.get('/userdevice/:userID', function (req, res) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Successfully retrieved user-device data.' });
     });
-
 });
 
-// all other requests redirect to 404
-router.all("*", function (req, res, next) {
+// All other requests redirect to 404.
+app.all("*", function (req, res, next) {
     return res.send('Page not found (use some other).');
     next();
 });
 
-// port must be set to 8080 because incoming http requests are routed from port 80 to port 8080
+// Port must be set to 8080 because incoming http requests are routed from port 80 to port 8080.
 app.listen(8080, function () {
     console.log('Node app is running on port 8080.');
 });
 
-// allows "grunt dev" to create a development server with livereload
+// Allows "grunt dev" to create a development server with livereload.
 module.exports = app;
