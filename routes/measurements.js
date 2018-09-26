@@ -22,7 +22,7 @@ router.get('/measurement/:id', function (req, res) {
     });
 });
 
-//  Delete measurement.
+// Delete measurement.
 router.delete('/measurement/:id', function (req, res) {
     let measurement_id = req.params.id;
     db.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
@@ -43,22 +43,22 @@ router.post('/measurement', function (req, res) {
   if (!aqi || !pm25 || !pm10 || !co2 || !date || !time || !deviceId) {
       return res.status(400).send({ error: true, message: 'Please provide: aqi (int), pm25 (int), pm10 (int), co2 (int), date (string), time (string) and deviceId (int).' });
   }
-    db.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?", [aqi, pm25, pm10, co2, date, time], function (error, results, fields) {
+    db.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?, deviceId = ?", [aqi, pm25, pm10, co2, date, time, deviceId], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'New measurement has been created successfully.' });
     });
 });
 
 // Update measurement with id.
-router.put('/measurement', function (req, res) {
-    let measurement_id = req.body.measurement_id;
+router.put('/measurement/:id', function (req, res) {
+    let measurement_id = req.params.id;
     let aqi = req.body.aqi;
     let pm25 = req.body.pm25;
     let pm10 = req.body.pm25;
     let co2 = req.body.co2;
     let date = req.body.date;
     let time = req.body.time;
-    if (!measurement_id || !aqi || !pm25 || !pm10 || !co2 || !date || !time) {
+    if (!aqi || !pm25 || !pm10 || !co2 || !date || !time) {
         return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
     }
     db.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
