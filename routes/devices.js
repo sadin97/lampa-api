@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var db = require('../database');
 
-
 // Retrieve all devices.
 router.get('/devices', function (req, res) {
     db.query('SELECT * FROM devices', function (error, results, fields) {
@@ -21,7 +20,6 @@ router.get('/device/:id', function (req, res) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Device id list.' });
     });
-
 });
 
 // Update device with id.

@@ -20,7 +20,6 @@ router.get('/user/:id', function (req, res) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'User id list.' });
     });
-
 });
 
 // Update user with id.
