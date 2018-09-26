@@ -1,32 +1,48 @@
-const express = require('express');
-const app = express();
-const mysql = require('mysql');
-const bodyParser = require('body-parser');
+var express = require('express');
+var app = express();
 
-// connection configurations
-const mc = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'lampa'
-});
+var bodyParser = require('body-parser');
+var router = express.Router();
+
+var db = require('./database');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// connect to database
-mc.connect();
+
+
+
+
+var users = require('./routes/users');
+// var devices = require('./routes/devices');
+// var measurements = require('./routes/measurements');
+
+app.use('/api/v1/', users);
+// app.use('/api/v1/', devices);
+// app.use('/api/v1/', measurements);
+
+
+// Default route.
+router.get('/', function(req, res) {
+    res.json({ message: 'hooray! welcome to our api!' });
+});
+
+app.use('/api/v1', router);
+
+
+
+
 
 // default route
-app.get('/', function (req, res) {
-    return res.send({ error: true, message: 'hello' })
-});
+// app.get('/', function (req, res) {
+//     return res.send({ error: true, message: 'hello' })
+// });
 
 // Retrieve all measurements.
 app.get('/measurements', function (req, res) {
-    mc.query('SELECT * FROM measurements', function (error, results, fields) {
+    db.query('SELECT * FROM measurements', function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'List of all measurements.' });
     });
@@ -38,7 +54,7 @@ app.get('/measurement/:id', function (req, res) {
     if (!measurement_id) {
         return res.status(400).send({ error: true, message: 'Please provide measurement id.' });
     }
-    mc.query('SELECT * FROM measurements where id=?', measurement_id, function (error, results, fields) {
+    db.query('SELECT * FROM measurements where id=?', measurement_id, function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Measurement id list.' });
     });
@@ -48,7 +64,7 @@ app.get('/measurement/:id', function (req, res) {
 //  Delete measurement.
 app.delete('/measurement/:id', function (req, res) {
     let measurement_id = req.params.id;
-    mc.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
+    db.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'Measurement has been deleted successfully.' });
     });
@@ -69,7 +85,7 @@ app.post('/measurement', function (req, res) {
       return res.status(400).send({ error: true, message: 'Please provide: aqi (int), pm25 (int), pm10 (int), co2 (int), date (string), time (string) and deviceId (int).' });
   }
 
-    mc.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?", [aqi, pm25, pm10, co2, date, time], function (error, results, fields) {
+    db.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?", [aqi, pm25, pm10, co2, date, time], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'New measurement has been created successfully.' });
     });
@@ -91,7 +107,7 @@ app.put('/measurement', function (req, res) {
         return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
     }
 
-    mc.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
+    db.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
     });
@@ -120,7 +136,7 @@ app.post('/userdevice', function (req, res) {
       return res.status(400).send({ error: true, message: 'Please provide: userId (int) and deviceId (int).' });
   }
 
-    mc.query("INSERT INTO userdevices SET userID = ?, deviceID = ?", [userID, deviceID], function (error, results, fields) {
+    db.query("INSERT INTO userdevices SET userID = ?, deviceID = ?", [userID, deviceID], function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results, message: 'New user-device connection has been created successfully.' });
     });
@@ -132,7 +148,7 @@ app.get('/userdevice/:userID', function (req, res) {
     if (!user_id) {
         return res.status(400).send({ error: true, message: 'Please provide user id.' });
     }
-    mc.query('SELECT * FROM userdevices where userID = ?', user_id, function (error, results, fields) {
+    db.query('SELECT * FROM userdevices where userID = ?', user_id, function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Successfully retrieved user-device data.' });
     });
