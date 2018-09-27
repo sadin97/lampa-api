@@ -16,7 +16,7 @@ router.get('/measurement/:id', function (req, res) {
     if (!measurement_id) {
         return res.status(400).send({ error: true, message: 'Please provide measurement id.' });
     }
-    db.query('SELECT * FROM measurements where id=?', measurement_id, function (error, results, fields) {
+    db.query('SELECT * FROM measurements where id = ?', measurement_id, function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Measurement id list.' });
     });
