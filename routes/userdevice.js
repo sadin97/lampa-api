@@ -39,7 +39,7 @@ router.get('/userdevice/device/:id', function (req, res) {
     });
 });
 
-// Delete user from deviceId.
+// Delete user from all devices.
 router.delete('/userdevice/user/:id', function (req, res) {
     let user_id = req.params.id;
     db.query('DELETE FROM userdevices WHERE userID = ?', [user_id], function (error, results, fields) {
@@ -48,12 +48,22 @@ router.delete('/userdevice/user/:id', function (req, res) {
     });
 });
 
-// Delete device from userId.
+// Delete user from deviceId.
 router.delete('/userdevice/device/:id', function (req, res) {
     let device_id = req.params.id;
     db.query('DELETE FROM userdevices WHERE deviceID = ?', [device_id], function (error, results, fields) {
         if (error) throw error;
-        return res.send({ error: false, data: results, message: 'Device has been disconnected from every user that is connected to successfully.' });
+        return res.send({ error: false, data: results, message: 'Device has been disconnected from every user successfully.' });
+    });
+});
+
+// Disconnect specific userId from specific deviceId.
+router.delete('/userdevice/userdev/:userId/:devId', function (req, res) {
+    let user_id = req.params.userId;
+    let device_id = req.params.devId;
+    db.query('DELETE FROM userdevices WHERE deviceID = ? AND userID = ?', [device_id, user_id], function (error, results, fields) {
+        if (error) throw error;
+        return res.send({ error: false, data: results, message: 'User is successfully disconnected from specific device.' });
     });
 });
 
