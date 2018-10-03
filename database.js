@@ -8,6 +8,15 @@ const lampa_db = mysql.createConnection({
     database: 'walter_ba_db_3'
 });
 
+/*
+
+host: 'localhost',
+user: 'root',
+password: '',
+database: 'lampa'
+
+*/
+
 // Connect to database.
 lampa_db.connect();
 
