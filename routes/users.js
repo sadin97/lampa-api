@@ -32,7 +32,7 @@ router.put('/user/:id', function (req, res) {
        return res.status(400).send({ error: true, message: 'Please provide user id.' });
     }
 
-    if (/^[a-zA-Z]+$/.test(name)) {
+    if (/^[a-zA-Z]+$/.test(name)) { // If user name is only letters.
       // res.send({ message: 'You sent valid name!', new_name: `${name}`, user_id: `${user_id}` });
       db.query('UPDATE users SET name = ? WHERE id = ?', [name, user_id], function (error, results, fields) {
           if (error) throw error;
