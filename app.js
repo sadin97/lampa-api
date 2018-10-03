@@ -33,8 +33,8 @@ app.all("*", function (req, res, next) {
 });
 
 // Port must be set to 8080 because incoming http requests are routed from port 80 to port 8080.
-app.listen(8080, function () {
-    console.log('Node app is running on port 8080.');
+app.listen(4545, function () {
+    console.log('Node app is running on port 4545.');
 });
 
 // Allows "grunt dev" to create a development server with livereload.
