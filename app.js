@@ -13,11 +13,15 @@ var users = require('./routes/users');
 var devices = require('./routes/devices');
 var measurements = require('./routes/measurements');
 var userdevice = require('./routes/userdevice');
+var login = require('./routes/login');
+var registration = require('./routes/registration');
 
 app.use('/api/v1/', users);
 app.use('/api/v1/', devices);
 app.use('/api/v1/', measurements);
 app.use('/api/v1/', userdevice);
+app.use('/api/v1/', login);
+app.use('/api/v1/', registration);
 
 // Default route.
 router.get('/', function(req, res) {
