@@ -24,12 +24,6 @@ var sha512 = function(password, salt){
   };
 };
 
-function saltHashPassword(userpassword) {
-    var salt = genRandomString(16); /** Gives us salt of length 16 */
-    var passwordData = sha512(userpassword, salt);
-
-}
-
 // Add a new user.
 router.post('/registration', function (req, res) {
   let name = req.body.name;
@@ -42,17 +36,6 @@ router.post('/registration', function (req, res) {
   console.log('UserPassword = ' + textPassword);
   console.log('Passwordhash = ' + passwordData.passwordHash);
   console.log('nSalt = ' + passwordData.salt);
-  // let salt = bcrypt.genSaltSync(saltRounds);
-  // let hash = bcrypt.hashSync(textPassword, salt);
-
-  // Technique 1 (generate a salt and hash on separate function calls).
-  // bcrypt.genSalt(saltRounds, function(err, salt) {
-  //     bcrypt.hash(textPassword, salt, function(err, hash) {
-  //         // Store hash in your password DB.
-  //         res.send({ message: `'${textPassword}' is my text password.\n'${hash}' is hash.\n'${salt}' is salt.` })
-  //
-  //     });
-  // });
 
   if (!name || !email || !textPassword) {
       return res.status(400).send({ error: true, message: 'Please provide: name (string), email (string) and textPassword (string).' });
@@ -63,8 +46,5 @@ router.post('/registration', function (req, res) {
       return res.send({  error: false, data: results, message: `'${textPassword}' is my text password.\n'${passwordData.passwordHash}' is hash.\n'${passwordData.salt}' is salt.` })
       });
 });
-
-
-
 
 module.exports = router;
