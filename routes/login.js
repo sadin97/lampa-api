@@ -11,27 +11,33 @@ router.post('/login', async function (req, res) {
   let textPassword = req.body.password;
 
   if (!email || !textPassword) {
-      return res.status(400).send({ error: true, message: 'Please provide: email (string) and textPassword (string).' });
+    return res.status(400).send({ error: true, message: 'Please provide: email (string) and textPassword (string).' });
   }
 
-db.query('SELECT salt, password FROM users where email = ?', email, function (error, results, fields) {
+  db.query('SELECT salt, password, name FROM users where email = ?', email, function (error, results, fields) {
       if (error) throw error;
+      let salt = results[0]['salt'];
+      let passHashed = results[0]['password'];
 
-      console.log("rezultat", results[0]['salt']);
-      return results[0];
-      // return res.send({ error: false, data: results[0], message: 'User data from provider mail retrieved.' });
+      console.log('name: ', results[0]['name'])
+
+      let loginInput = bcrypt.hashSync(textPassword, salt);
+
+      bcrypt.compare(loginInput, passHashed, function(err, res) {
+        if (res) {
+         console.log('Password matches!');
+        } else {
+         console.log('Password don\'t match!');
+        }
+      });
+
+      console.log('User data from provider mail retrieved.');
+      return res.send({ error: false, data: results, message: 'Request ended.' });
   });
 
-  // let hash = ;
-
-  // bcrypt.compare('somePassword', hash, function(err, res) {
-  //   if(res) {
-  //    // Passwords match
-  //   } else {
-  //    // Passwords don't match
-  //   }
-  // });
-
+  // if (salt === '') {
+  //   return res.send({  message: 'Salt is empty, error!' })
+  // }
 
 });
 
