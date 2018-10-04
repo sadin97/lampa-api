@@ -46,10 +46,36 @@ router.post('/login', async function (req, res) {
         console.log(derivedKey.toString('hex'));  // '3745e48...08d59ae'
       });
 
+      // comparePasswords(textPassword, loginInput.salt, loginInput.passwordHash)
+      //   .then(async (data: boolean) => {
+      //     if (!data) {
+      //       return reject(messages.error_user_password_current_incorrect);
+      //     }
+      //     const token: string = await getAuth0JWT({email, password});
+      //     return resolve(token);
+      //   })
+      //   .catch((error: Error) => {
+      //     return reject(messages.error_user_password_current_incorrect);
+      //   });
+      //
+      //   export function comparePasswords(input: string, salted: string, match: string): Promise<boolean> {
+      //     return new Promise<boolean>((resolve: (data) => void, reject: (data) => void) => {
+      //       crypto.pbkdf2(input, salted, 10000, LENGTH, diggest, (err: Error, hash: Buffer) => {
+      //         if (err) {
+      //           reject(err);
+      //         } else {
+      //           setTimeout(() => { resolve((hash.toString("hex") === match) as boolean); }, timeout);
+      //         }
+      //       });
+      //     });
+      //   }
+
       console.log('User data from provider mail retrieved.');
       return res.send({ error: false, data: results, message: 'Request ended.' });
   });
 
 });
+
+
 
 module.exports = router;
