@@ -5,16 +5,44 @@ var uuid = require('uuid');
 const crypto = require('crypto');
 var bcrypt = require('bcryptjs');
 const saltRounds = 10;
+var jwt = require('jsonwebtoken');
 
-var sha512 = function(password, salt){
+var sha512 = function(password, salt) {
   var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
   hash.update(password);
   var value = hash.digest('hex');
   return {
-      salt:salt,
-      passwordHash:value
+    salt:salt,
+    passwordHash:value
   };
 };
+
+// function verifyPassword(password, combined, callback) {
+//   // extract the salt and hash from the combined buffer
+//   var saltBytes = combined.readUInt32BE(0);
+//   var hashBytes = combined.length - saltBytes - 8;
+//   var iterations = combined.readUInt32BE(4);
+//   var salt = combined.slice(8, saltBytes + 8);
+//   var hash = combined.toString('binary', saltBytes + 8);
+//
+//   // verify the salt and hash against the password
+//   crypto.pbkdf2(password, salt, iterations, hashBytes, function(err, verify) {
+//     if (err) {
+//       return callback(err, false);
+//     }
+//     callback(null, verify.toString('binary') === hash);
+//   });
+// }
+//
+// function comparePasswords(input, salted, match): {
+//   crypto.pbkdf2(input, salted, 10000, LENGTH, diggest, (err: Error, hash: Buffer) => {
+//     if (err) {
+//       reject(err);
+//     } else {
+//       setTimeout(() => { resolve((hash.toString("hex") === match) as boolean); }, timeout);
+//     }
+//   });
+// }
 
 router.post('/login', async function (req, res) {
   let email = req.body.email;
@@ -46,12 +74,18 @@ router.post('/login', async function (req, res) {
         console.log(derivedKey.toString('hex'));  // '3745e48...08d59ae'
       });
 
+      var token = jwt.sign(results[0]['password'], results[0]['salt']);
+      console.log('token: ', token)
+
       // comparePasswords(textPassword, loginInput.salt, loginInput.passwordHash)
       //   .then(async (data: boolean) => {
       //     if (!data) {
       //       return reject(messages.error_user_password_current_incorrect);
       //     }
       //     const token: string = await getAuth0JWT({email, password});
+      //
+      //
+      //
       //     return resolve(token);
       //   })
       //   .catch((error: Error) => {
@@ -75,7 +109,5 @@ router.post('/login', async function (req, res) {
   });
 
 });
-
-
 
 module.exports = router;
