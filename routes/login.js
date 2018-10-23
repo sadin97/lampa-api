@@ -65,17 +65,43 @@ router.post('/login', async function (req, res) {
 
       let loginInput = sha512(textPassword, salt);
 
-      console.log('passHashed iz baze: ', passHashed);
-      console.log('password iz requesta hashan', loginInput.passwordHash)
+      console.log('------------------------------------------------------------')
+      console.log('passHashed iz baze:             ', passHashed);
+      console.log('password iz requesta hashan:    ', loginInput.passwordHash)
       console.log('salt iz requesta', loginInput.salt)
+      console.log('------------------------------------------------------------')
 
-      crypto.pbkdf2(loginInput.passwordHash, loginInput.salt, 100000, 64, 'sha512', (err, derivedKey) => {
-        if (err) throw err;
-        console.log(derivedKey.toString('hex'));  // '3745e48...08d59ae'
-      });
+      // loginInput.passwordHash i passHashed
 
-      var token = jwt.sign(results[0]['password'], results[0]['salt']);
-      console.log('token: ', token)
+      if (passHashed === loginInput.passwordHash) {
+          var token = jwt.sign(results[0]['password'], results[0]['salt']);
+          return res.send({ error: false, data: token, message: 'Token recieved.' });
+          console.log('poslao token: ', token)
+      } else {
+        return res.send({ error: true, message: 'Invalid password.' });
+      }
+      // 
+      // crypto.pbkdf2(loginInput.passwordHash, loginInput.salt, 100000, 64, 'sha512', (err, derivedKey) => {
+      //   if (err) throw err;
+      //   console.log('derivedKey: ', derivedKey.toString('hex'))
+      //
+      //   // if (derivedKey)  {
+      //   //   var token = jwt.sign(results[0]['password'], results[0]['salt']);
+      //   //   return res.send({ error: false, data: token, message: 'Token recieved' });
+      //   //   console.log('token: ', token)
+      //   // } else {
+      //   //   return res.send({error: true, message: 'Hash is incorrect.'});
+      //   // }
+      //
+      //   // if (err) {
+      //   //   reject(err);
+      //   // } else {
+      //   //   setTimeout(() => { resolve((derivedKey.toString("hex") === match) as boolean); }, timeout);
+      //   // }
+      //   // if (derivedKey.toString('hex') === loginInput.passwordHash) {
+      //   //   console.log('USPJESAN LOGIN')
+      //   // }
+      // });
 
       // comparePasswords(textPassword, loginInput.salt, loginInput.passwordHash)
       //   .then(async (data: boolean) => {
