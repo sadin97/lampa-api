@@ -18,25 +18,30 @@ var login = require('./routes/login');
 var registration = require('./routes/registration');
 
 function middleware (req, res, next) {
-  console.log("jesi pozvao middleware");
+  console.log("Middleware is called!");
   let token = req.headers.authorization
 
-  // First security checks.
-  const parts = token.split(".");
-  if (parts.length !== 3) {
-    throw new Error("The inspected token doesn't appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.");
-  }
-
   if (!token) {
-    return res.send({ error: true, data: {},  message: 'Nisi poslao authorization.' });
+    return res.send({ error: true, data: {},  message: 'You did not sent token authorization.' });
   } else {
+    console.log('evo headersa: ', req.headers.authorization);
+    token = req.headers.authorization.slice(7)
+
+    // First security checks.
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      throw new Error("The inspected token doesn't appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.");
+    }
+
     var decoded = jwtDecode(token);
-    console.log('dekodirani token u middlewareu: ', decoded);
+    console.log('Dekodirani token u middleware-u: ', decoded);
+
     db.query('SELECT * FROM users where Email = ?', decoded.email, function (error, results, fields) {
-      // if (error) {
-      //     console.log('Problem sa bazom.')
-      // }
-      return res.send({ error: false, message: 'Nasao sam email!' });
+      if (decoded.email === results[0].Email) {
+        console.log('Nasao sam email: ', results[0].Email);
+      } else {
+        console.log('Nisam nasao mail: ', decoded.email)
+      }
     });
   }
 

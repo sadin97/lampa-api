@@ -81,14 +81,7 @@ router.post('/login', async function (req, res) {
 
       if (passHashed === loginInput.passwordHash) {
           var token = jwt.sign(object, 'shhhhh');
-          // var token = jwt.sign(results[0]['password'], results[0]['salt']);
           console.log('poslao token: ', token);
-          // var token = 'eyJ0eXAiO.../// jwt token';
-          /* prints:
-           * { foo: "bar",
-           *   exp: 1393286893,
-           *   iat: 1393268893  }
-           */
           req.headers.authorization = token;
           return res.send({ error: false, data: token, message: 'Token recieved.' });
       } else {
