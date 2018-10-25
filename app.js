@@ -16,12 +16,20 @@ var userdevice = require('./routes/userdevice');
 var login = require('./routes/login');
 var registration = require('./routes/registration');
 
-app.use('/api/v1/', users);
-app.use('/api/v1/', devices);
-app.use('/api/v1/', measurements);
-app.use('/api/v1/', userdevice);
-app.use('/api/v1/', login);
+function middleware (req, res, next) {
+  console.log("jesi pozvao middleware");
+  if (!req.headers.authorization) {
+    return res.send({ error: true, data: {},  message: 'Nisi poslao authorization.' });
+  }
+  next();
+}
 app.use('/api/v1/', registration);
+app.use('/api/v1/', login);
+app.use('/api/v1/', middleware, users);
+app.use('/api/v1/', middleware, devices);
+app.use('/api/v1/', middleware, measurements);
+app.use('/api/v1/', middleware, userdevice);
+
 
 // Default route.
 router.get('/', function(req, res) {

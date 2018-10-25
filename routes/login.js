@@ -77,10 +77,11 @@ router.post('/login', async function (req, res) {
           var token = jwt.sign(results[0]['password'], results[0]['salt']);
           return res.send({ error: false, data: token, message: 'Token recieved.' });
           console.log('poslao token: ', token)
+          req.headers.authorization = token;
       } else {
         return res.send({ error: true, message: 'Invalid password.' });
       }
-      // 
+      //
       // crypto.pbkdf2(loginInput.passwordHash, loginInput.salt, 100000, 64, 'sha512', (err, derivedKey) => {
       //   if (err) throw err;
       //   console.log('derivedKey: ', derivedKey.toString('hex'))
