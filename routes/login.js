@@ -6,6 +6,7 @@ const crypto = require('crypto');
 var bcrypt = require('bcryptjs');
 const saltRounds = 10;
 var jwt = require('jsonwebtoken');
+var jwtDecode = require('jwt-decode');
 
 var sha512 = function(password, salt) {
   var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
@@ -73,11 +74,23 @@ router.post('/login', async function (req, res) {
 
       // loginInput.passwordHash i passHashed
 
+      let object = {
+        email: email,
+        name: results[0]['name']
+      }
+
       if (passHashed === loginInput.passwordHash) {
-          var token = jwt.sign(results[0]['password'], results[0]['salt']);
-          return res.send({ error: false, data: token, message: 'Token recieved.' });
-          console.log('poslao token: ', token)
+          var token = jwt.sign(object, 'shhhhh');
+          // var token = jwt.sign(results[0]['password'], results[0]['salt']);
+          console.log('poslao token: ', token);
+          // var token = 'eyJ0eXAiO.../// jwt token';
+          /* prints:
+           * { foo: "bar",
+           *   exp: 1393286893,
+           *   iat: 1393268893  }
+           */
           req.headers.authorization = token;
+          return res.send({ error: false, data: token, message: 'Token recieved.' });
       } else {
         return res.send({ error: true, message: 'Invalid password.' });
       }

@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var router = express.Router();
 var db = require('./database');
+var jwtDecode = require('jwt-decode');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -18,9 +19,27 @@ var registration = require('./routes/registration');
 
 function middleware (req, res, next) {
   console.log("jesi pozvao middleware");
-  if (!req.headers.authorization) {
-    return res.send({ error: true, data: {},  message: 'Nisi poslao authorization.' });
+  let token = req.headers.authorization
+
+  // First security checks.
+  const parts = token.split(".");
+  if (parts.length !== 3) {
+    throw new Error("The inspected token doesn't appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.");
   }
+
+  if (!token) {
+    return res.send({ error: true, data: {},  message: 'Nisi poslao authorization.' });
+  } else {
+    var decoded = jwtDecode(token);
+    console.log('dekodirani token u middlewareu: ', decoded);
+    db.query('SELECT * FROM users where Email = ?', decoded.email, function (error, results, fields) {
+      // if (error) {
+      //     console.log('Problem sa bazom.')
+      // }
+      return res.send({ error: false, message: 'Nasao sam email!' });
+    });
+  }
+
   next();
 }
 app.use('/api/v1/', registration);
