@@ -20,7 +20,7 @@ var registration = require('./routes/registration');
 function middleware (req, res, next) {
   console.log("Middleware is called!");
   let token = req.headers.authorization
-
+  console.log('token: ', token)
   if (!token) {
     return res.send({ error: true, data: {},  message: 'You did not sent token authorization.' });
   } else {
@@ -57,7 +57,8 @@ app.use('/api/v1/', middleware, userdevice);
 
 // Default route.
 router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });
+    return res.send('hooray! welcome to our api!');
+    // res.json({ message: 'hooray! welcome to our api!' });
 });
 
 app.use('/api/v1', router);
@@ -69,9 +70,9 @@ app.all("*", function (req, res, next) {
 });
 
 // // Port must be set to 8080 because incoming http requests are routed from port 80 to port 8080.
-app.listen(9874, function () {
-    console.log('Node app is running on port 9874.');
-});
+// app.listen(9874, function () {
+//     console.log('Node app is running on port 9874.');
+// });
 // Port must be set to 8080 because incoming http requests are routed from port 80 to port 8080.
 app.listen(4545, function () {
     console.log('Node app is running on port 4545.');
