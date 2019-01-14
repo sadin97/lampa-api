@@ -4,31 +4,31 @@ var db = require('../database');
 
 // Retrieve all measurements.
 router.get('/measurements', function (req, res) {
-    db.query('SELECT * FROM measurements', function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results, message: 'List of all measurements.' });
-    });
+  db.query('SELECT * FROM measurements', function (error, results, fields) {
+    if (error) throw error;
+    return res.send({ error: false, data: results, message: 'List of all measurements.' });
+  });
 });
 
 // Retrieve measurement with id.
 router.get('/measurement/:id', function (req, res) {
-    let measurement_id = req.params.id;
-    if (!measurement_id) {
-        return res.status(400).send({ error: true, message: 'Please provide measurement id.' });
-    }
-    db.query('SELECT * FROM measurements where id = ?', measurement_id, function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results[0], message: 'Measurement id list.' });
-    });
+  let measurement_id = req.params.id;
+  if (!measurement_id) {
+    return res.status(400).send({ error: true, message: 'Please provide measurement id.' });
+  }
+  db.query('SELECT * FROM measurements where id = ?', measurement_id, function (error, results, fields) {
+    if (error) throw error;
+    return res.send({ error: false, data: results[0], message: 'Measurement id list.' });
+  });
 });
 
 // Delete measurement.
 router.delete('/measurement/:id', function (req, res) {
-    let measurement_id = req.params.id;
-    db.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results, message: 'Measurement has been deleted successfully.' });
-    });
+  let measurement_id = req.params.id;
+  db.query('DELETE FROM measurements WHERE id = ?', [measurement_id], function (error, results, fields) {
+    if (error) throw error;
+    return res.send({ error: false, data: results, message: 'Measurement has been deleted successfully.' });
+  });
 });
 
 // Add a new measurement.
@@ -45,8 +45,8 @@ router.post('/measurement', function (req, res) {
   }
   if ((aqi === parseInt(aqi, 10)) && (pm25 === parseInt(pm25, 10)) && (pm10 === parseInt(pm10, 10)) && (co2 === parseInt(co2, 10))) {
     db.query("INSERT INTO measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ?, deviceId = ?", [aqi, pm25, pm10, co2, date, time, deviceId], function (error, results, fields) {
-        if (error) throw error;
-        return res.send({ error: false, data: results, message: 'New measurement has been created successfully.' });
+      if (error) throw error;
+      return res.send({ error: false, data: results, message: 'New measurement has been created successfully.' });
     });
   } else {
     res.send({ message: 'New measurement couldn\'t be created - inserted values for aqi/pm25/pm10/co2 are not valid (not integer).' })
@@ -55,24 +55,24 @@ router.post('/measurement', function (req, res) {
 
 // Update measurement with id.
 router.put('/measurement/:id', function (req, res) {
-    let measurement_id = req.params.id;
-    let aqi = req.body.aqi;
-    let pm25 = req.body.pm25;
-    let pm10 = req.body.pm25;
-    let co2 = req.body.co2;
-    let date = req.body.date;
-    let time = req.body.time;
-    if (!aqi || !pm25 || !pm10 || !co2 || !date || !time) {
-        return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
-    }
-    if ((aqi === parseInt(aqi, 10)) && (pm25 === parseInt(pm25, 10)) && (pm10 === parseInt(pm10, 10)) && (co2 === parseInt(co2, 10))) {
-      db.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
-          if (error) throw error;
-          return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
-      });
-    } else {
-      res.send({ message: 'Measurement couldn\'t be updated - inserted values for aqi/pm25/pm10/co2 are not valid (not integer).' })
-    }
+  let measurement_id = req.params.id;
+  let aqi = req.body.aqi;
+  let pm25 = req.body.pm25;
+  let pm10 = req.body.pm25;
+  let co2 = req.body.co2;
+  let date = req.body.date;
+  let time = req.body.time;
+  if (!aqi || !pm25 || !pm10 || !co2 || !date || !time) {
+    return res.status(400).send({ error: true, message: 'Please provide: measurement_id (int), aqi (int), pm25 (int), pm10 (int), co2 (int), date (string) and time (string).' });
+  }
+  if ((aqi === parseInt(aqi, 10)) && (pm25 === parseInt(pm25, 10)) && (pm10 === parseInt(pm10, 10)) && (co2 === parseInt(co2, 10))) {
+    db.query("UPDATE measurements SET aqi = ?, pm25 = ?, pm10 = ?, co2 = ?, date = ?, time = ? WHERE id = ?", [aqi, pm25, pm10, co2, date, time, measurement_id], function (error, results, fields) {
+      if (error) throw error;
+      return res.send({ error: false, data: results, message: 'Measurement has been updated successfully.' });
+    });
+  } else {
+    res.send({ message: 'Measurement couldn\'t be updated - inserted values for aqi/pm25/pm10/co2 are not valid (not integer).' })
+  }
 });
 
 module.exports = router;
